@@ -8,6 +8,7 @@ let gameOver = false;
 let currentPlayer = 'X';           // human is X, AI is O
 let useAlphaBeta = true;
 let maxDepth = 9;                   // 9 = Hard (full tree), 1 = Easy
+let isMultiplayer = false;
 
 let scores = { X: 0, O: 0, D: 0 };
 
@@ -27,6 +28,8 @@ const resetBtn    = document.getElementById('resetBtn');
 const abToggle    = document.getElementById('alphaBetaToggle');
 const abStatus    = document.getElementById('abStatus');
 const diffBtns    = document.querySelectorAll('.diff-btn');
+const singlePlayerBtn = document.getElementById('singlePlayerBtn');
+const multiPlayerBtn = document.getElementById('multiPlayerBtn');
 const statNodes   = document.getElementById('statNodes');
 const statPruned  = document.getElementById('statPruned');
 const statDepth   = document.getElementById('statDepth');
@@ -36,6 +39,8 @@ const statAlgo    = document.getElementById('statAlgo');
 const scoreX      = document.getElementById('scoreX');
 const scoreO      = document.getElementById('scoreO');
 const scoreDraw   = document.getElementById('scoreDraw');
+const scoreXLabel = document.getElementById('scoreXLabel');
+const scoreOLabel = document.getElementById('scoreOLabel');
 const flowSteps   = [0,1,2,3].map(i => document.getElementById('flow' + i));
 
 // =============================================
@@ -60,31 +65,60 @@ diffBtns.forEach(btn => {
   });
 });
 
+singlePlayerBtn.addEventListener('click', () => {
+  isMultiplayer = false;
+  singlePlayerBtn.classList.add('active');
+  multiPlayerBtn.classList.remove('active');
+  document.getElementById('alphaBetaRow').style.display = 'flex';
+  document.querySelector('.diff-row').style.display = 'flex';
+  document.getElementById('aiFlowPanel').style.display = 'block';
+  scoreXLabel.textContent = 'YOU (X)';
+  scoreOLabel.textContent = 'AI (O)';
+  resetGame();
+});
+
+multiPlayerBtn.addEventListener('click', () => {
+  isMultiplayer = true;
+  multiPlayerBtn.classList.add('active');
+  singlePlayerBtn.classList.remove('active');
+  document.getElementById('alphaBetaRow').style.display = 'none';
+  document.querySelector('.diff-row').style.display = 'none';
+  document.getElementById('aiFlowPanel').style.display = 'none';
+  scoreXLabel.textContent = 'PLAYER X';
+  scoreOLabel.textContent = 'PLAYER O';
+  resetGame();
+});
+
 // =============================================
 //  CELL CLICK — HUMAN MOVE
 // =============================================
 function onCellClick(e) {
   const i = parseInt(e.target.dataset.i);
-  if (board[i] || gameOver || currentPlayer !== 'X') return;
+  if (board[i] || gameOver) return;
 
-  makeMove(i, 'X');
+  makeMove(i, currentPlayer);
   if (checkEnd()) return;
 
-  currentPlayer = 'O';
-  setStatus("AI is thinking…");
-  highlightFlow(1);
+  if (isMultiplayer) {
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    setStatus(`${currentPlayer}'s turn — place ${currentPlayer}`);
+  } else {
+    currentPlayer = 'O';
+    setStatus("AI is thinking…");
+    highlightFlow(1);
 
-  // Small timeout so the DOM updates before AI blocks thread
-  setTimeout(() => {
-    highlightFlow(2);
-    aiMove();
-    highlightFlow(3);
-    if (!checkEnd()) {
-      currentPlayer = 'X';
-      setStatus("Your turn — place X");
-      highlightFlow(0);
-    }
-  }, 120);
+    // Small timeout so the DOM updates before AI blocks thread
+    setTimeout(() => {
+      highlightFlow(2);
+      aiMove();
+      highlightFlow(3);
+      if (!checkEnd()) {
+        currentPlayer = 'X';
+        setStatus("Your turn — place X");
+        highlightFlow(0);
+      }
+    }, 120);
+  }
 }
 
 // =============================================
@@ -296,7 +330,7 @@ function resetGame() {
     cell.textContent = '';
     cell.className = 'cell';
   });
-  setStatus("Your turn — place X");
+  setStatus(isMultiplayer ? "X's turn — place X" : "Your turn — place X");
   highlightFlow(0);
   statNodes.textContent  = '—';
   statPruned.textContent = '—';

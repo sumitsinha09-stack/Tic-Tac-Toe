@@ -37,7 +37,7 @@
         <p class="panel-desc">You are <span class="x-col">X</span>. The AI plays <span class="o-col">O</span> using Minimax.</p>
 
         <!-- Mode Toggle -->
-        <div class="mode-row">
+        <div class="mode-row" id="alphaBetaRow">
           <label class="toggle-label">Alpha-Beta Pruning</label>
           <div class="toggle-wrap">
             <input type="checkbox" id="alphaBetaToggle" checked />
@@ -52,6 +52,15 @@
           <div class="diff-btns">
             <button class="diff-btn" data-depth="1">Easy</button>
             <button class="diff-btn active" data-depth="9">Hard</button>
+          </div>
+        </div>
+
+        <!-- Mode Selection -->
+        <div class="mode-row">
+          <span class="toggle-label">Game Mode</span>
+          <div class="mode-btns">
+            <button id="singlePlayerBtn" class="mode-btn active">Single Player</button>
+            <button id="multiPlayerBtn" class="mode-btn">Multiplayer</button>
           </div>
         </div>
 
@@ -75,16 +84,16 @@
 
         <!-- Scores -->
         <div class="scoreboard">
-          <div class="score-item"><span class="score-label x-col">YOU (X)</span><span class="score-val" id="scoreX">0</span></div>
+          <div class="score-item"><span class="score-label x-col" id="scoreXLabel">YOU (X)</span><span class="score-val" id="scoreX">0</span></div>
           <div class="score-item"><span class="score-label">DRAWS</span><span class="score-val" id="scoreDraw">0</span></div>
-          <div class="score-item"><span class="score-label o-col">AI (O)</span><span class="score-val" id="scoreO">0</span></div>
+          <div class="score-item"><span class="score-label o-col" id="scoreOLabel">AI (O)</span><span class="score-val" id="scoreO">0</span></div>
         </div>
 
         <button id="resetBtn" class="reset-btn">&#8635; New Game</button>
       </section>
 
       <!-- AI DECISION FLOW -->
-      <section class="panel">
+      <section class="panel" id="aiFlowPanel">
         <div class="panel-number">02</div>
         <h2>AI Decision Flow</h2>
         <div class="flow-row">
