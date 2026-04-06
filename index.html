@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tic Tac Toe & The Minimax Algorithm</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-tag">GAME THEORY • ADVERSARIAL SEARCH • ARTIFICIAL INTELLIGENCE</div>
+    <h1>TIC TAC T<span class="x-col">O</span>E <span class="amp">&amp;</span> THE MINI<span class="x-col">MAX</span></h1>
+    <p class="subtitle">How a simple 3×3 grid became the foundation of <span class="highlight">game-playing AI</span></p>
+  </header>
+
+  <!-- Top Stats Bar -->
+  <section class="stats-bar">
+    <div class="stat"><span class="stat-num">255K</span><span class="stat-label">POSSIBLE GAMES</span></div>
+    <div class="stat"><span class="stat-num">5,478</span><span class="stat-label">VALID STATES</span></div>
+    <div class="stat"><span class="stat-num">8</span><span class="stat-label">WIN LINES</span></div>
+    <div class="stat"><span class="stat-num">3</span><span class="stat-label">OUTCOMES</span></div>
+  </section>
+
+  <main>
+
+    <!-- LEFT COLUMN -->
+    <div class="col-left">
+
+      <!-- GAME PANEL -->
+      <section class="panel game-panel">
+        <div class="panel-number">01</div>
+        <h2>Play Against the AI</h2>
+        <p class="panel-desc">You are <span class="x-col">X</span>. The AI plays <span class="o-col">O</span> using Minimax.</p>
+
+        <!-- Mode Toggle -->
+        <div class="mode-row">
+          <label class="toggle-label">Alpha-Beta Pruning</label>
+          <div class="toggle-wrap">
+            <input type="checkbox" id="alphaBetaToggle" checked />
+            <label class="toggle" for="alphaBetaToggle"></label>
+          </div>
+          <span id="abStatus" class="ab-status on">ON</span>
+        </div>
+
+        <!-- Difficulty -->
+        <div class="diff-row">
+          <span class="toggle-label">Difficulty</span>
+          <div class="diff-btns">
+            <button class="diff-btn" data-depth="1">Easy</button>
+            <button class="diff-btn active" data-depth="9">Hard</button>
+          </div>
+        </div>
+
+        <!-- Board -->
+        <div class="board-wrap">
+          <div class="board" id="board">
+            <div class="cell" data-i="0"></div>
+            <div class="cell" data-i="1"></div>
+            <div class="cell" data-i="2"></div>
+            <div class="cell" data-i="3"></div>
+            <div class="cell" data-i="4"></div>
+            <div class="cell" data-i="5"></div>
+            <div class="cell" data-i="6"></div>
+            <div class="cell" data-i="7"></div>
+            <div class="cell" data-i="8"></div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div id="statusMsg" class="status-msg">Your turn — place X</div>
+
+        <!-- Scores -->
+        <div class="scoreboard">
+          <div class="score-item"><span class="score-label x-col">YOU (X)</span><span class="score-val" id="scoreX">0</span></div>
+          <div class="score-item"><span class="score-label">DRAWS</span><span class="score-val" id="scoreDraw">0</span></div>
+          <div class="score-item"><span class="score-label o-col">AI (O)</span><span class="score-val" id="scoreO">0</span></div>
+        </div>
+
+        <button id="resetBtn" class="reset-btn">&#8635; New Game</button>
+      </section>
+
+      <!-- AI DECISION FLOW -->
+      <section class="panel">
+        <div class="panel-number">02</div>
+        <h2>AI Decision Flow</h2>
+        <div class="flow-row">
+          <div class="flow-step" id="flow0">
+            <div class="flow-icon">&#8862;</div>
+            <div class="flow-name">Check<br/>Board</div>
+          </div>
+          <div class="flow-arrow">&#8594;</div>
+          <div class="flow-step" id="flow1">
+            <div class="flow-icon">&#127795;</div>
+            <div class="flow-name">Build<br/>Game Tree</div>
+          </div>
+          <div class="flow-arrow">&#8594;</div>
+          <div class="flow-step" id="flow2">
+            <div class="flow-icon">&#9881;</div>
+            <div class="flow-name">Run<br/>Minimax</div>
+          </div>
+          <div class="flow-arrow">&#8594;</div>
+          <div class="flow-step" id="flow3">
+            <div class="flow-icon">&#10003;</div>
+            <div class="flow-name">Play<br/>Best Move</div>
+          </div>
+        </div>
+        <p class="panel-desc">At every turn the AI generates the entire game tree, recursively evaluates all possible futures, then selects the move with the optimal guaranteed outcome.</p>
+      </section>
+
+      <!-- WHY MINIMAX -->
+      <section class="panel">
+        <div class="panel-number">03</div>
+        <h2>Why Minimax?</h2>
+        <p class="panel-desc">Minimax is the standard algorithm for two-player zero-sum games. It operates on one core assumption:</p>
+        <div class="callout">
+          <strong>Both players play optimally.</strong> The maximizer <span class="x-col">(X)</span> picks the highest-scoring move. The minimizer <span class="o-col">(O)</span> picks the lowest. Neither makes mistakes.
+        </div>
+        <ul class="score-rules">
+          <li><span class="x-col">X wins</span> &rarr; <strong>+10</strong> <span class="muted">(minus depth for speed preference)</span></li>
+          <li><span class="o-col">O wins</span> &rarr; <strong>&minus;10</strong> <span class="muted">(plus depth for delayed loss)</span></li>
+          <li><span class="muted-text">Draw</span> &rarr; <strong>0</strong></li>
+        </ul>
+      </section>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-right">
+
+      <!-- LIVE STATS -->
+      <section class="panel">
+        <div class="panel-number">04</div>
+        <h2>Live AI Stats</h2>
+        <p class="panel-desc">Real-time metrics from the last AI move.</p>
+        <div class="live-stats">
+          <div class="live-stat"><span class="ls-label">Nodes Evaluated</span><span class="ls-val" id="statNodes">&#8212;</span></div>
+          <div class="live-stat"><span class="ls-label">Nodes Pruned</span><span class="ls-val" id="statPruned">&#8212;</span></div>
+          <div class="live-stat"><span class="ls-label">Search Depth</span><span class="ls-val" id="statDepth">&#8212;</span></div>
+          <div class="live-stat"><span class="ls-label">Best Score</span><span class="ls-val" id="statScore">&#8212;</span></div>
+          <div class="live-stat"><span class="ls-label">Best Move (Cell)</span><span class="ls-val" id="statMove">&#8212;</span></div>
+          <div class="live-stat"><span class="ls-label">Algorithm</span><span class="ls-val" id="statAlgo">Alpha-Beta</span></div>
+        </div>
+      </section>
+
+      <!-- MINIMAX CODE -->
+      <section class="panel code-panel">
+        <div class="panel-number">05</div>
+        <h2>Minimax Algorithm</h2>
+        <p class="panel-desc">The core recursive function that powers the AI.</p>
+        <div class="code-block">
+<pre><code><span class="kw">function</span> <span class="fn">minimax</span>(board, depth, isMaximizing):
+  <span class="cmt">// Base cases — terminal states</span>
+  <span class="kw">if</span> X wins: <span class="kw">return</span> <span class="num">+10</span> - depth
+  <span class="kw">if</span> O wins: <span class="kw">return</span> <span class="num">-10</span> + depth
+  <span class="kw">if</span> board full: <span class="kw">return</span> <span class="num">0</span>
+
+  <span class="kw">if</span> isMaximizing: <span class="cmt">// X's turn</span>
+    bestScore &larr; <span class="num">-&infin;</span>
+    <span class="kw">for each</span> empty cell:
+      place X
+      score &larr; <span class="fn">minimax</span>(board, depth+<span class="num">1</span>, <span class="kw">false</span>)
+      undo move
+      bestScore &larr; <span class="fn">max</span>(bestScore, score)
+    <span class="kw">return</span> bestScore
+  <span class="kw">else</span>: <span class="cmt">// O's turn</span>
+    bestScore &larr; <span class="num">+&infin;</span>
+    <span class="kw">for each</span> empty cell:
+      place O
+      score &larr; <span class="fn">minimax</span>(board, depth+<span class="num">1</span>, <span class="kw">true</span>)
+      undo move
+      bestScore &larr; <span class="fn">min</span>(bestScore, score)
+    <span class="kw">return</span> bestScore</code></pre>
+        </div>
+      </section>
+
+      <!-- ALPHA-BETA CODE -->
+      <section class="panel code-panel">
+        <div class="panel-number">06</div>
+        <h2>Alpha-Beta Pruning</h2>
+        <div class="ab-defs">
+          <div class="ab-def"><span class="ab-sym x-col">&alpha;</span> <strong>(alpha)</strong> = best score the maximizer can guarantee</div>
+          <div class="ab-def"><span class="ab-sym o-col">&beta;</span> <strong>(beta)</strong> = best score the minimizer can guarantee</div>
+          <div class="ab-def callout-sm">If <span class="x-col">&alpha; &ge; &beta;</span>, prune remaining branches — they cannot change the outcome.</div>
+        </div>
+        <div class="code-block">
+<pre><code><span class="kw">function</span> <span class="fn">alphabeta</span>(board, depth, &alpha;, &beta;, isMax):
+  <span class="kw">if</span> terminal: <span class="kw">return</span> <span class="fn">evaluate</span>(board)
+  <span class="kw">if</span> isMax:
+    val &larr; <span class="num">-&infin;</span>
+    <span class="kw">for each</span> move:
+      val &larr; <span class="fn">max</span>(val, <span class="fn">alphabeta</span>(..., &alpha;, &beta;, <span class="kw">false</span>))
+      &alpha; &larr; <span class="fn">max</span>(&alpha;, val)
+      <span class="kw">if</span> &alpha; &ge; &beta;: <span class="kw">break</span> <span class="cmt">// &beta; cutoff</span>
+    <span class="kw">return</span> val
+  <span class="kw">else</span>:
+    val &larr; <span class="num">+&infin;</span>
+    <span class="kw">for each</span> move:
+      val &larr; <span class="fn">min</span>(val, <span class="fn">alphabeta</span>(..., &alpha;, &beta;, <span class="kw">true</span>))
+      &beta; &larr; <span class="fn">min</span>(&beta;, val)
+      <span class="kw">if</span> &alpha; &ge; &beta;: <span class="kw">break</span> <span class="cmt">// &alpha; cutoff</span>
+    <span class="kw">return</span> val</code></pre>
+        </div>
+      </section>
+
+      <!-- COMPLEXITY -->
+      <section class="panel">
+        <div class="panel-number">07</div>
+        <h2>Complexity Analysis</h2>
+        <table class="complexity-table">
+          <thead><tr><th>METRIC</th><th>VALUE</th></tr></thead>
+          <tbody>
+            <tr><td>State Space (upper bound)</td><td class="val">3&#x2079; = 19,683</td></tr>
+            <tr><td>Unique Game Sequences</td><td class="val">26,830</td></tr>
+            <tr><td>Minimax Time Complexity</td><td class="val">O(b<sup>d</sup>) &asymp; O(9!)</td></tr>
+            <tr><td>With Alpha-Beta Pruning</td><td class="val">O(b<sup>d/2</sup>)</td></tr>
+            <tr><td>Branching Factor (avg)</td><td class="val">&asymp; 4</td></tr>
+            <tr><td>Optimal Outcome</td><td class="val x-col">Always a Draw</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- KEY TAKEAWAY -->
+      <section class="panel takeaway-panel">
+        <div class="panel-number">08</div>
+        <h2>Key Takeaway</h2>
+        <p>With optimal play from both sides, Tic Tac Toe <strong>always ends in a draw</strong>. Minimax guarantees this — making the AI <span class="x-col">unbeatable</span>.</p>
+        <div class="callout">
+          This simple 3&times;3 grid remains one of the best teaching tools in CS — a gateway to adversarial search, game theory, and the AI techniques powering modern engines for Chess, Go, and beyond.
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    POSTER PRESENTATION &bull; TIC TAC TOE &amp; THE MINIMAX ALGORITHM &bull; GAME THEORY &amp; ARTIFICIAL INTELLIGENCE
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

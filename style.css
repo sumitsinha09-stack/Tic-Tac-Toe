@@ -1,0 +1,621 @@
+/* =============================================
+   VARIABLES – matches the poster color scheme
+   ============================================= */
+:root {
+  --bg:         #0d0f1a;
+  --bg2:        #13162a;
+  --panel:      #161929;
+  --panel2:     #1c2038;
+  --border:     #252a45;
+  --x-col:      #ff4d4d;
+  --o-col:      #00c8c8;
+  --text:       #e8eaf0;
+  --muted:      #6b7294;
+  --code-bg:    #0a0c18;
+  --highlight:  #f5a623;
+  --kw:         #cc99ff;
+  --fn:         #79c0ff;
+  --num:        #f0a500;
+  --cmt:        #4a5568;
+  --radius:     10px;
+  --font-mono:  'JetBrains Mono', monospace;
+  --font-main:  'Space Grotesk', sans-serif;
+}
+
+/* =============================================
+   RESET & BASE
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-main);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* =============================================
+   HEADER
+   ============================================= */
+header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #0a0c18 0%, var(--bg) 100%);
+}
+
+.header-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+header h1 {
+  font-size: 52px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.x-col { color: var(--x-col); }
+.o-col { color: var(--o-col); }
+.amp { color: var(--highlight); }
+
+.subtitle {
+  font-size: 18px;
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.highlight { color: var(--highlight); }
+
+/* =============================================
+   STATS BAR
+   ============================================= */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin: 20px;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.stat {
+  background: var(--panel);
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--highlight);
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* =============================================
+   MAIN LAYOUT
+   ============================================= */
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.col-left, .col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* =============================================
+   PANELS
+   ============================================= */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 25px;
+  position: relative;
+}
+
+.panel-number {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.panel h2 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.panel-desc {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+/* =============================================
+   GAME PANEL
+   ============================================= */
+.game-panel { grid-column: span 1; }
+
+.mode-row, .diff-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-wrap input[type="checkbox"] {
+  display: none;
+}
+
+.toggle {
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  background: var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.toggle-wrap input[type="checkbox"]:checked + .toggle {
+  background: var(--o-col);
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: var(--panel2);
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left 0.3s;
+}
+
+.toggle-wrap input[type="checkbox"]:checked + .toggle::after {
+  left: 22px;
+}
+
+.ab-status {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--border);
+  color: var(--muted);
+  transition: all 0.3s;
+}
+
+.ab-status.on {
+  background: var(--o-col);
+  color: var(--bg);
+}
+
+.diff-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.diff-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.diff-btn:hover {
+  border-color: var(--highlight);
+}
+
+.diff-btn.active {
+  background: var(--highlight);
+  border-color: var(--highlight);
+  color: var(--bg);
+}
+
+/* =============================================
+   GAME BOARD
+   ============================================= */
+.board-wrap {
+  margin: 20px 0;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: var(--border);
+  padding: 8px;
+  border-radius: 8px;
+  aspect-ratio: 1;
+}
+
+.cell {
+  background: var(--bg2);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.cell:hover:not(.x-mark):not(.o-mark) {
+  background: var(--panel2);
+  border-color: var(--muted);
+}
+
+.cell.x-mark { color: var(--x-col); }
+.cell.o-mark { color: var(--o-col); }
+
+.cell.win-cell {
+  background: rgba(245, 166, 35, 0.1);
+  border-color: var(--highlight);
+}
+
+.status-msg {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  padding: 15px;
+  background: var(--panel2);
+  border-radius: 6px;
+}
+
+/* =============================================
+   SCOREBOARD
+   ============================================= */
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.score-item {
+  background: var(--panel2);
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.score-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.score-val {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--highlight);
+}
+
+.reset-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: var(--highlight);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-main);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.reset-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(245, 166, 35, 0.3);
+}
+
+/* =============================================
+   FLOW STEPS
+   ============================================= */
+.flow-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.flow-step {
+  flex: 1;
+  text-align: center;
+  padding: 15px;
+  background: var(--panel2);
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  transition: all 0.3s;
+}
+
+.flow-step.active {
+  background: rgba(0, 200, 200, 0.1);
+  border-color: var(--o-col);
+  box-shadow: 0 0 10px rgba(0, 200, 200, 0.2);
+}
+
+.flow-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.flow-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.flow-arrow {
+  color: var(--muted);
+  font-size: 18px;
+  margin: 0 -5px;
+}
+
+/* =============================================
+   CALLOUTS
+   ============================================= */
+.callout {
+  background: rgba(245, 166, 35, 0.1);
+  border-left: 4px solid var(--highlight);
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.callout-sm {
+  font-size: 12px;
+  margin: 10px 0;
+}
+
+/* =============================================
+   SCORE RULES
+   ============================================= */
+.score-rules {
+  list-style: none;
+  margin: 15px 0;
+}
+
+.score-rules li {
+  padding: 8px 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.score-rules strong {
+  font-family: var(--font-mono);
+  color: var(--highlight);
+}
+
+/* =============================================
+   LIVE STATS
+   ============================================= */
+.live-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.live-stat {
+  background: var(--panel2);
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.ls-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.ls-val {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--highlight);
+}
+
+/* =============================================
+   CODE BLOCKS
+   ============================================= */
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 15px 0;
+}
+
+.code-block pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.code-block code {
+  color: var(--text);
+}
+
+.kw { color: var(--kw); font-weight: 600; }
+.fn { color: var(--fn); }
+.num { color: var(--num); font-weight: 600; }
+.cmt { color: var(--cmt); }
+
+/* =============================================
+   ALPHA-BETA DEFS
+   ============================================= */
+.ab-defs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.ab-def {
+  background: var(--panel2);
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.ab-sym {
+  display: inline-block;
+  width: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* =============================================
+   COMPLEXITY TABLE
+   ============================================= */
+.complexity-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+  font-size: 13px;
+}
+
+.complexity-table th,
+.complexity-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.complexity-table th {
+  background: var(--panel2);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.complexity-table td.val {
+  font-family: var(--font-mono);
+  color: var(--highlight);
+}
+
+/* =============================================
+   TAKEAWAY PANEL
+   ============================================= */
+.takeaway-panel {
+  background: linear-gradient(135deg, var(--panel) 0%, var(--panel2) 100%);
+  border: 2px solid var(--border);
+}
+
+.takeaway-panel p {
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+/* =============================================
+   FOOTER
+   ============================================= */
+footer {
+  text-align: center;
+  padding: 30px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 1200px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 32px;
+  }
+
+  .stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .live-stats {
+    grid-template-columns: 1fr;
+  }
+}
