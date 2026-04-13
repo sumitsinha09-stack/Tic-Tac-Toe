@@ -8,7 +8,7 @@ let gameOver = false;
 let currentPlayer = 'X';           // human is X, AI is O
 let useAlphaBeta = true;
 let maxDepth = 9;                   // 9 = Hard (full tree), 1 = Easy
-let isMultiplayer = false;
+let gameMode = 'single';
 
 let scores = { X: 0, O: 0, D: 0 };
 
@@ -28,8 +28,6 @@ const resetBtn    = document.getElementById('resetBtn');
 const abToggle    = document.getElementById('alphaBetaToggle');
 const abStatus    = document.getElementById('abStatus');
 const diffBtns    = document.querySelectorAll('.diff-btn');
-const singlePlayerBtn = document.getElementById('singlePlayerBtn');
-const multiPlayerBtn = document.getElementById('multiPlayerBtn');
 const statNodes   = document.getElementById('statNodes');
 const statPruned  = document.getElementById('statPruned');
 const statDepth   = document.getElementById('statDepth');
@@ -39,9 +37,21 @@ const statAlgo    = document.getElementById('statAlgo');
 const scoreX      = document.getElementById('scoreX');
 const scoreO      = document.getElementById('scoreO');
 const scoreDraw   = document.getElementById('scoreDraw');
-const scoreXLabel = document.getElementById('scoreXLabel');
-const scoreOLabel = document.getElementById('scoreOLabel');
 const flowSteps   = [0,1,2,3].map(i => document.getElementById('flow' + i));
+
+const modeBtns    = document.querySelectorAll('.mode-btn');
+const gameTitle   = document.getElementById('gameTitle');
+const gameDesc    = document.getElementById('gameDesc');
+const alphaBetaSection = document.getElementById('alphaBetaSection');
+const difficultySection = document.getElementById('difficultySection');
+const aiFlowSection = document.getElementById('aiFlowSection');
+const whyMinimaxSection = document.getElementById('whyMinimaxSection');
+const liveStatsSection = document.getElementById('liveStatsSection');
+const minimaxCodeSection = document.getElementById('minimaxCodeSection');
+const alphaBetaCodeSection = document.getElementById('alphaBetaCodeSection');
+const complexitySection = document.getElementById('complexitySection');
+const labelX = document.getElementById('labelX');
+const labelO = document.getElementById('labelO');
 
 // =============================================
 //  INIT
@@ -57,36 +67,54 @@ abToggle.addEventListener('change', () => {
 });
 
 diffBtns.forEach(btn => {
+  if (btn.classList.contains('mode-btn')) return; // handled below
   btn.addEventListener('click', () => {
-    diffBtns.forEach(b => b.classList.remove('active'));
+    diffBtns.forEach(b => { if(!b.classList.contains('mode-btn')) b.classList.remove('active'); });
     btn.classList.add('active');
     maxDepth = parseInt(btn.dataset.depth);
     resetGame();
   });
 });
 
-singlePlayerBtn.addEventListener('click', () => {
-  isMultiplayer = false;
-  singlePlayerBtn.classList.add('active');
-  multiPlayerBtn.classList.remove('active');
-  document.getElementById('alphaBetaRow').style.display = 'flex';
-  document.querySelector('.diff-row').style.display = 'flex';
-  document.getElementById('aiFlowPanel').style.display = 'block';
-  scoreXLabel.textContent = 'YOU (X)';
-  scoreOLabel.textContent = 'AI (O)';
-  resetGame();
-});
-
-multiPlayerBtn.addEventListener('click', () => {
-  isMultiplayer = true;
-  multiPlayerBtn.classList.add('active');
-  singlePlayerBtn.classList.remove('active');
-  document.getElementById('alphaBetaRow').style.display = 'none';
-  document.querySelector('.diff-row').style.display = 'none';
-  document.getElementById('aiFlowPanel').style.display = 'none';
-  scoreXLabel.textContent = 'PLAYER X';
-  scoreOLabel.textContent = 'PLAYER O';
-  resetGame();
+modeBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    modeBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    gameMode = btn.dataset.mode;
+    
+    if (gameMode === 'multi') {
+      gameTitle.textContent = "Play Local Multiplayer";
+      gameDesc.innerHTML = "Player 1 is <span class=\"x-col\">X</span>. Player 2 is <span class=\"o-col\">O</span>.";
+      alphaBetaSection.style.display = 'none';
+      difficultySection.style.display = 'none';
+      aiFlowSection.style.display = 'none';
+      whyMinimaxSection.style.display = 'none';
+      liveStatsSection.style.display = 'none';
+      minimaxCodeSection.style.display = 'none';
+      alphaBetaCodeSection.style.display = 'none';
+      complexitySection.style.display = 'none';
+      labelX.textContent = "PLAYER 1";
+      labelO.textContent = "PLAYER 2";
+    } else {
+      gameTitle.textContent = "Play Against the AI";
+      gameDesc.innerHTML = "You are <span class=\"x-col\">X</span>. The AI plays <span class=\"o-col\">O</span> using Minimax.";
+      alphaBetaSection.style.display = 'flex';
+      difficultySection.style.display = 'flex';
+      aiFlowSection.style.display = 'block';
+      whyMinimaxSection.style.display = 'block';
+      liveStatsSection.style.display = 'block';
+      minimaxCodeSection.style.display = 'block';
+      alphaBetaCodeSection.style.display = 'block';
+      complexitySection.style.display = 'block';
+      labelX.textContent = "YOU (X)";
+      labelO.textContent = "AI (O)";
+    }
+    scores = { X: 0, O: 0, D: 0 };
+    scoreX.textContent = 0;
+    scoreO.textContent = 0;
+    scoreDraw.textContent = 0;
+    resetGame();
+  });
 });
 
 // =============================================
@@ -96,13 +124,11 @@ function onCellClick(e) {
   const i = parseInt(e.target.dataset.i);
   if (board[i] || gameOver) return;
 
-  makeMove(i, currentPlayer);
-  if (checkEnd()) return;
+  if (gameMode === 'single') {
+    if (currentPlayer !== 'X') return;
+    makeMove(i, 'X');
+    if (checkEnd()) return;
 
-  if (isMultiplayer) {
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    setStatus(`${currentPlayer}'s turn — place ${currentPlayer}`);
-  } else {
     currentPlayer = 'O';
     setStatus("AI is thinking…");
     highlightFlow(1);
@@ -118,6 +144,13 @@ function onCellClick(e) {
         highlightFlow(0);
       }
     }, 120);
+  } else {
+    // Multiplayer Local Game
+    makeMove(i, currentPlayer);
+    if (checkEnd()) return;
+
+    currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
+    setStatus(`Player ${currentPlayer === 'X' ? '1' : '2'}'s turn — place ${currentPlayer}`);
   }
 }
 
@@ -288,11 +321,11 @@ function checkEnd() {
   if (winner) {
     highlightWinCells(winner);
     if (winner === 'X') {
-      setStatus("🎉 You win!");
+      setStatus(gameMode === 'single' ? "🎉 You win!" : "🎉 Player 1 wins!");
       scores.X++;
       scoreX.textContent = scores.X;
     } else {
-      setStatus("🤖 AI wins!");
+      setStatus(gameMode === 'single' ? "🤖 AI wins!" : "🎉 Player 2 wins!");
       scores.O++;
       scoreO.textContent = scores.O;
     }
@@ -330,13 +363,18 @@ function resetGame() {
     cell.textContent = '';
     cell.className = 'cell';
   });
-  setStatus(isMultiplayer ? "X's turn — place X" : "Your turn — place X");
-  highlightFlow(0);
-  statNodes.textContent  = '—';
-  statPruned.textContent = '—';
-  statDepth.textContent  = '—';
-  statScore.textContent  = '—';
-  statMove.textContent   = '—';
+  
+  if (gameMode === 'single') {
+    setStatus("Your turn — place X");
+    highlightFlow(0);
+    statNodes.textContent  = '—';
+    statPruned.textContent = '—';
+    statDepth.textContent  = '—';
+    statScore.textContent  = '—';
+    statMove.textContent   = '—';
+  } else {
+    setStatus("Player 1's turn — place X");
+  }
 }
 
 // =============================================
